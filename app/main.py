@@ -1,13 +1,13 @@
 import os
 import psycopg
 from psycopg.rows import dict_row
-from typing import Optional
+from typing import Optional,List
 from fastapi import FastAPI,Response,status,HTTPException,Depends
 from fastapi.params import Body
 from .database import engine,get_db
 from . import models
 from sqlalchemy.orm import Session
-from .schema import PostBase,PostCreate,PostResp
+from .schema import PostBase,PostCreate,PostResp,UserCreate
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -37,7 +37,7 @@ def test(db: Session = Depends(get_db)):
         "message" : posts
     }
 
-@app.get("/posts")
+@app.get("/posts",response_model=List[PostResp])
 def get_posts(db: Session = Depends(get_db)):
 
     posts = db.query(models.Post).all()
@@ -105,6 +105,15 @@ def update_post(id:int,post:PostCreate,db: Session = Depends(get_db)):
     
     return post_query.first()
 
+@app.post('/users', status_code=status.HTTP_201_CREATED)
+def create_user(user:UserCreate, db: Session = Depends(get_db)):
+
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
 
 
 
