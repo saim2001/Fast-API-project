@@ -7,7 +7,8 @@ from fastapi.params import Body
 from .database import engine,get_db
 from . import models
 from sqlalchemy.orm import Session
-from .schema import PostBase,PostCreate,PostResp,UserCreate
+from .schema import PostBase,PostCreate,PostResp,UserCreate,UserResp
+from . import utils
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -105,9 +106,10 @@ def update_post(id:int,post:PostCreate,db: Session = Depends(get_db)):
     
     return post_query.first()
 
-@app.post('/users', status_code=status.HTTP_201_CREATED)
+@app.post('/users', status_code=status.HTTP_201_CREATED,response_model=UserResp)
 def create_user(user:UserCreate, db: Session = Depends(get_db)):
 
+    user.password = utils.hash(user.password)
     new_user = models.User(**user.model_dump())
     db.add(new_user)
     db.commit()

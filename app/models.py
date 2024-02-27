@@ -19,7 +19,7 @@ class User(Base):
     id = Column(Integer,primary_key=True,nullable=False)
     username = Column(VARCHAR,nullable=False,unique=True)
     email = Column(String,nullable=False,unique=True)
-    password = Column(VARCHAR,nullable=False,unique=True)
+    password = Column(VARCHAR,nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),nullable=False,server_default=text('now()'))
 
 
