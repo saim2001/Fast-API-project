@@ -26,6 +26,7 @@ class UserResp(BaseModel):
     id: int
     username: str
     email: EmailStr
+    created_at:datetime
 
     class Config:
         from_attributes = True
