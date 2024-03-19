@@ -24,7 +24,7 @@ def create_posts(post: schema.PostCreate,db: Session = Depends(get_db), user_id:
     # cur = conn.execute(""" INSERT into posts (title,content,published) VALUES (%s,%s,%s) RETURNING * """,
     #              (post.title,post.content,post.published))
     # conn.commit()
-    print(user_id)
+    # print(user_id)
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
     db.commit()
@@ -60,7 +60,7 @@ def delete_post(id:int, db: Session = Depends(get_db), user_id: int = Depends(oa
 
 
 @router.put("/{id}",response_model=schema.PostResp)
-def update_post(id:int,post:schema.PostCreate,db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def update_post(id:int,post:schema.PostCreate,db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)    ):
     
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post_data = post_query.first()
