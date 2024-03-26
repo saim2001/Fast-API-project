@@ -19,7 +19,7 @@ def create_user(user:schema.UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     return new_user
-
+#
 @router.get('/{id}',response_model=schema.UserResp)
 def get_user(id: int, db: Session = Depends(get_db)):
 
