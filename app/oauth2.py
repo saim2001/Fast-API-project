@@ -1,28 +1,29 @@
 from jose import jwt,JWTError
-from dotenv import dotenv_values
+# from dotenv import dotenv_values
 from datetime import datetime,timedelta
 from fastapi import status,HTTPException,Depends
 from fastapi.security.oauth2 import OAuth2PasswordBearer
+from .config import settings
 
 from . import schema
 
-config = dotenv_values()
+# config = dotenv_values()
 
 oAuth2 = OAuth2PasswordBearer(tokenUrl='login')
 
 def create_access_token(data: dict):
     
     to_encode = data.copy()
-    expire_time = datetime.utcnow() + timedelta(minutes=int(config.get("ACCESS_TOKEN_EXPIRE_MINUTES")))
+    expire_time = datetime.utcnow() + timedelta(minutes=settings.access_token_expire_time)
     to_encode["exp"] = expire_time
-    encoded_jwt = jwt.encode(to_encode,config.get("SECRET_KEY"),algorithm=config.get("ALGORITHM"))
+    encoded_jwt = jwt.encode(to_encode,settings.secret_key,algorithm=settings.algorithm)
 
     return encoded_jwt
 
 def verify_access_token(token:str, credential_exception):
 
     try:
-        payload = jwt.decode(token,config.get("SECRET_KEY"),algorithms=[config.get("ALGORITHM")])
+        payload = jwt.decode(token,settings.secret_key,algorithms=[settings.algorithm])
         id: str = payload.get("user_id")
         # print(type(id))
         if id is None:
