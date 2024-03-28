@@ -1,6 +1,6 @@
 from .database import Base
 from sqlalchemy.orm import Relationship
-from sqlalchemy import TIMESTAMP, Column,Integer,VARCHAR,Boolean,String,ForeignKey
+from sqlalchemy import TIMESTAMP, Column,Integer,VARCHAR,Boolean,String,ForeignKey,Enum
 from sqlalchemy.sql.expression import text
 
 
@@ -25,5 +25,11 @@ class User(Base):
     email = Column(String,nullable=False,unique=True)
     password = Column(VARCHAR,nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),nullable=False,server_default=text('now()'))
+
+class Vote(Base):
+    __tablename__ = 'votes'
+    user_id = Column(Integer,ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    post_id = Column(Integer,ForeignKey('posts.id',ondelete="CASCADE"),primary_key=True)
+
 
 
