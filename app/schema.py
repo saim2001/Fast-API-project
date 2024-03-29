@@ -1,7 +1,12 @@
-from typing import Optional
-from pydantic import BaseModel,EmailStr
+from typing import Optional,Literal
+from pydantic import BaseModel,EmailStr,conint
 from datetime import datetime
+from enum import Enum
 
+
+class VoteEnum(Enum):
+    DOWNVOTE = 'Down'
+    UPVOTE = 'Up'
 
 class UserCreate(BaseModel):
     username: str
@@ -48,3 +53,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[int] = None
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(ge=0,le=1)
+    type: Literal["UPVOTE","DOWNVOTE"]
