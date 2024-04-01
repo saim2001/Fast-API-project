@@ -44,6 +44,15 @@ class PostResp(PostBase):
 
     class Config:
         from_attributes = True
+
+class AllPostResp(BaseModel):
+    post: PostResp
+    upvotes: int
+    downvotes: int
+
+    class Config:
+        from_attributes = True
+    
     
 
 
