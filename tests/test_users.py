@@ -4,18 +4,6 @@ from jose import jwt
 from app.config import settings
 from .databse import client,session
 
-@pytest.fixture
-def test_user(client):
-    user_data = {
-        'username':'saim89',
-        'email':'saim.rao62@yahoo.com',
-        'password':'psw11122'
-    }
-    res = client.post('/users/',json=user_data)
-    assert res.status_code == 201
-    new_user = res.json()
-    new_user['password'] = user_data['password']
-    return new_user
 
 
 
@@ -41,3 +29,19 @@ def test_login(client,test_user):
     assert id == test_user['id']
     assert login_res.token_type == 'bearer'
     assert res.status_code == 200
+
+
+@pytest.mark.parametrize('email, password, status_code',[
+    ('wrongemail@gmail.com', 'password', 403),
+    ('saim.rao62@yahoo.com', 'wrongpassword', 403),
+    ('wrongemail@gmail.com', 'wrongpassword', 403),
+    (None, 'password', 422),
+    ('saim.rao62@gmailcom', None, 422)
+])
+def test_failed_login(client,email,password,status_code):
+    res = client.post('/login',data={
+        'username':email,
+        'password':password
+    })
+    assert res.status_code == status_code
+    # assert res.json().get('detail') == 'Invalid credentials'
